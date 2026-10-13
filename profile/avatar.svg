@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="MGPL Diagnostics">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14264A"/><stop offset="1" stop-color="#0C1A35"/></linearGradient>
+    <radialGradient id="glowA" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#C2410C" stop-opacity="0.42"/><stop offset="1" stop-color="#C2410C" stop-opacity="0"/></radialGradient>
+    <radialGradient id="glowB" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#E9A23B" stop-opacity="0.22"/><stop offset="1" stop-color="#E9A23B" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <circle cx="839.68" cy="921.6" r="563.2" fill="url(#glowA)"/>
+  <circle cx="122.88" cy="51.2" r="460.8" fill="url(#glowB)"/>
+  <g transform="translate(132.0 14.2) scale(1.9)">
+  <path d="M200 92C200 92 84 236 84 316a116 116 0 0 0 232 0C316 236 200 92 200 92Z" fill="#FFFFFF"/>
+  <path d="M200 252C176 286 176 334 200 368C224 334 224 286 200 252Z" fill="#C2410C"/>
+  <path d="M200 368C164 364 132 338 124 300C158 302 190 326 200 368Z" fill="#C2410C"/>
+  <path d="M200 368C236 364 268 338 276 300C242 302 210 326 200 368Z" fill="#C2410C"/>
+  <circle cx="200" cy="214" r="17" fill="#E9A23B"/>
+</g>
+</svg>
