@@ -1,121 +1,124 @@
 <p align="center">
-  <img src="banner.svg" alt="MGPL Diagnostics — lab reports and invoices, rendered to A4 in Node.js" width="100%" />
+  <img src="banner.svg" alt="MGPL Diagnostics: building the future of diagnostic software, in public" width="100%" />
 </p>
 
 <p align="center">
-  <b>Software for <a href="https://github.com/mgpl-diagnostics/website">Maa Gayatri Path Lab</a></b>, a pathology laboratory in Arang, Raipur, Chhattisgarh.<br/>
-  Lab reports, patient invoices and letterhead: generated from data, printed on A4, identical on screen and on paper.
+  <b>Open, modular software for <a href="https://github.com/mgpl-diagnostics">Maa Gayatri Path Lab</a></b>, a pathology laboratory in Arang, Raipur, Chhattisgarh.<br/>
+  Covers patients, samples, reports, billing, books and catalog, as small typed packages that each do one job well.
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/TypeScript-14264A?logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/React%2019-14264A?logo=react&logoColor=white" alt="React" />
-  <img src="https://img.shields.io/badge/Next.js%2016-14264A?logo=next.js&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/GraphQL-14264A?logo=graphql&logoColor=white" alt="GraphQL" />
   <img src="https://img.shields.io/badge/Fastify-14264A?logo=fastify&logoColor=white" alt="Fastify" />
-  <img src="https://img.shields.io/badge/Node.js%20%E2%89%A520-14264A?logo=node.js&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/MongoDB-14264A?logo=mongodb&logoColor=white" alt="MongoDB" />
+  <img src="https://img.shields.io/badge/PostgreSQL-14264A?logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Redis-14264A?logo=redis&logoColor=white" alt="Redis" />
+  <img src="https://img.shields.io/badge/Next.js-14264A?logo=next.js&logoColor=white" alt="Next.js" />
   <img src="https://img.shields.io/badge/react--pdf-C2410C" alt="react-pdf" />
 </p>
 
 ---
 
-### 🧪 What we build
+### 🧱 Backend kits
 
 <table>
 <tr>
 <td width="50%" valign="top">
 
-#### [report-kit](https://github.com/mgpl-diagnostics/report-kit) &nbsp;`backend`
-Turns patient results into A4 lab reports, as PDF or HTML.
-31 tests, 7 profiles, H/L flags, Navy Sidebar and classic designs, letterhead, barcode and QR.
-Mounts in Next.js, Fastify, Express or Hono.
+#### [db-kit](https://github.com/mgpl-diagnostics/db-kit) &nbsp;`data`
+Patients, bookings, samples, reports, invoices and payments on **MongoDB or PostgreSQL**, behind one API.
+Workflows are ACID on both. Books are double-entry, Tally-style, with trial balance, P&L, balance sheet
+and GST. Includes a Redis cache toolkit.
 
 </td>
 <td width="50%" valign="top">
 
-#### [invoice-kit](https://github.com/mgpl-diagnostics/invoice-kit) &nbsp;`backend`
-Patient bills accurate to the paisa: tests, packages, services, consumables, medicines, GST, discounts,
-split payments, amount in words. Ships the combined reports + invoices API.
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-
-#### [client](https://github.com/mgpl-diagnostics/client) &nbsp;`frontend`
-Headless, typed, **zero-dependency** SDK for every MGPL backend.
-Bring your own UI; optional unstyled React hooks.
-
-</td>
-<td width="50%" valign="top">
-
-#### [report-studio](https://github.com/mgpl-diagnostics/report-studio) &nbsp;`app`
-The reference Next.js app. A custom UI on the client SDK, the kits as its backend, and a result-entry form
-generated from the test catalog.
+#### [auth-kit](https://github.com/mgpl-diagnostics/auth-kit) &nbsp;`auth`
+scrypt passwords and revocable sessions, plus timing-safe, rate-limited login and single-use reset
+links. Roles and permissions work per branch, for a multi-branch lab.
 
 </td>
 </tr>
 <tr>
 <td width="50%" valign="top">
 
-#### [website](https://github.com/mgpl-diagnostics/website) &nbsp;`app`
-The lab's public website.
+#### [catalog-kit](https://github.com/mgpl-diagnostics/catalog-kit) &nbsp;`data`
+614 tests, each with parameters, units, methods, reference ranges, sample types and prices. Fuzzy search
+(~30 µs) understands lab shorthand: *lft*, *kft*, *sgpt*, *fbs*, *vit d*.
 
 </td>
 <td width="50%" valign="top">
 
-#### lab-panel &nbsp;`coming soon`
-The lab's internal panel for registrations, results and billing, built on the kits above.
+#### [report-kit](https://github.com/mgpl-diagnostics/report-kit) · [invoice-kit](https://github.com/mgpl-diagnostics/invoice-kit) &nbsp;`render`
+A4 lab reports and patient invoices as PDF, rendered in pure Node.js, with matching HTML. Letterhead,
+barcode, QR and GST bills accurate to the paisa.
 
 </td>
 </tr>
 </table>
+
+### 🖥️ Apps and clients
+
+| | |
+| --- | --- |
+| [**client**](https://github.com/mgpl-diagnostics/client) `frontend` | Headless, typed, zero-dependency SDK. Bring your own UI |
+| [**report-studio**](https://github.com/mgpl-diagnostics/report-studio) `app` | Reference Next.js app: report and invoice designer, result entry |
+| **api** `coming soon` | The backend: one GraphQL endpoint on Fastify that combines every kit |
+| **lab-panel** `coming soon` | Registrations, samples, results, billing and books for every branch |
+| **auth client** `coming soon` | Sign-in for frontends, with adapters for TanStack Query and others |
 
 ### 🧭 How it fits together
 
 ```mermaid
 flowchart LR
   subgraph Apps
-    W[website]
     P[lab panel]
     S[report-studio]
+    W[website]
   end
-  Apps -->|"@mgpl-diagnostics/client"| API
-  subgraph API["Backend · createMgplApi()"]
-    R[report-kit]
-    I[invoice-kit]
-  end
-  API --> PDF["A4 PDF · HTML · JSON"]
+  Apps -->|"GraphQL"| API["api<br/>Fastify · GraphQL Yoga"]
+  API --> AUTH[auth-kit]
+  API --> DB[db-kit]
+  API --> CAT[catalog-kit]
+  API --> RND["report-kit · invoice-kit"]
+  DB --> M[(MongoDB)]
+  DB --> PG[(PostgreSQL)]
+  DB --> R[(Redis)]
+  AUTH --> R
+  RND -->|"REST, binary only"| PDF["A4 PDF"]
 ```
 
-**Frontends** install only the tiny client and design their own screens.
-**One backend** (Next.js route, Fastify plugin or Express) renders every report and invoice in Node.js, with no browser.
+**GraphQL first.** REST appears only where it has to: PDF downloads, assets, health checks and payment
+webhooks.
 
-### ⚡ Try it
-
-```ts
-// backend — e.g. app/api/mgpl/[...path]/route.ts
-import { createMgplApi } from "@mgpl-diagnostics/invoice-kit";
-const api = createMgplApi();
-export { api as GET, api as POST, api as OPTIONS };
-```
+### ⚡ A taste
 
 ```ts
-// frontend
-import { createMgplClient } from "@mgpl-diagnostics/client";
-const pdf = await createMgplClient().reports.pdf({
-  patient: { name: "Kavita Sharma", age: 32, sex: "Female" },
-  tests: [{ template: "cbc", results: { hb: "10.8" } }],
-});
+import { createDb, issueInvoice, trialBalance } from "@mgpl-diagnostics/db-kit";
+import { createAuth } from "@mgpl-diagnostics/auth-kit";
+
+const db = await createDb({ backend: "pg", pg: { url: process.env.DATABASE_URL }, redis: process.env.REDIS_URL });
+const auth = createAuth({ users: db.repos.users, roles: db.repos.roles, sessions /* Redis */ });
+
+const { viewer, can } = await auth.context(token);
+if (can("invoice:create", branchId)) {
+  const { invoice } = await issueInvoice(db.repos, { orgId: viewer!.orgId, branchId, patientId, items, payments });
+  // → numbered MGPL/RPR01/2026-27/000045, Sales + Receipt vouchers posted, books still balance
+}
 ```
 
 ### ✅ How we work
 
-- **HTML and PDF match.** One geometry file, one row-height model, the same page breaks.
-- **Tested, not hoped.** Every sample is rendered in every design and variant, and each value is
-  verified *inside* the PDF text. Text fit and font glyphs are checked before a release.
-- **Private by default.** No patient data in any repo; the real signature is loaded from the server, never committed.
-- **Docs for people and AI.** Every repo has a README, `AGENTS.md`, `llms.txt` and `llms-full.txt`.
-- **Reviewed, always.** Nobody pushes to `main`. Every change is a pull request from a fork, with green CI
-  and a code-owner review. [How to contribute →](https://github.com/mgpl-diagnostics/.github/blob/main/.github/CONTRIBUTING.md)
+- **Money is exact.** Integer paise, double-entry vouchers that must balance, and ACID transactions on
+  MongoDB and PostgreSQL. Tests show two concurrent overpayments can't both succeed.
+- **Both databases, one contract.** The same test suite runs on real MongoDB and real PostgreSQL.
+- **Secure by default.** Tokens are stored only as hashes. Data is isolated per organisation, and
+  permissions are checked per branch.
+- **HTML and PDF match.** One geometry, one row model, the same page breaks; every value is checked inside the PDF.
+- **No patient data in any repo.** Real signatures load at runtime from the server and are never committed.
+- **Docs for people and AI.** Every repo has a README, `AGENTS.md` and `llms.txt`.
+- **Reviewed, always.** Nobody pushes to `main`. Every change is a pull request from a fork, with green
+  CI and a code-owner review. [How to contribute →](https://github.com/mgpl-diagnostics/.github/blob/main/.github/CONTRIBUTING.md)
 
 <p align="center"><sub>© MGPL Diagnostics (Maa Gayatri Path Lab), Arang, Raipur. Code is published for reference; all rights reserved.</sub></p>
