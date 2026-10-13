@@ -1,0 +1,49 @@
+name: Feature request
+description: Suggest a new capability, template, route or repo.
+title: "feat: "
+labels: ["enhancement", "triage"]
+body:
+  - type: dropdown
+    id: repo
+    attributes:
+      label: Package or app
+      options:
+        - report-kit
+        - invoice-kit
+        - client
+        - report-studio
+        - website
+        - new repo
+        - other / not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Who needs it and what they do today without it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: API shape, request body, or a sketch of the output.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contribution
+      options:
+        - label: I'd like to open a pull request for this (from my fork).
+        - label: This request contains no real patient data.
+          required: true

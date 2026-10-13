@@ -1,0 +1,70 @@
+name: Test data correction
+description: A test, parameter, unit, reference range or price is wrong or missing.
+title: "data: "
+labels: ["test-data", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Reference ranges end up on printed medical reports, so every change needs a source.
+        A pathologist reviews each one before it ships.
+
+  - type: input
+    id: test
+    attributes:
+      label: Test or profile
+      placeholder: "LFT — Liver Function Test"
+    validations:
+      required: true
+
+  - type: input
+    id: parameter
+    attributes:
+      label: Parameter
+      placeholder: "ALT (SGPT)"
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is wrong?
+      options:
+        - Reference range
+        - Unit
+        - Parameter name or order
+        - Missing parameter or test
+        - Method / specimen
+        - Price
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current value
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed value
+      description: Include sex / age splits if they apply.
+    validations:
+      required: true
+
+  - type: input
+    id: source
+    attributes:
+      label: Source
+      description: Textbook, kit insert, guideline or published rate list (title + link or edition).
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy
+      options:
+        - label: This request contains no real patient data.
+          required: true
