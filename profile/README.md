@@ -56,6 +56,22 @@ barcode, QR and GST bills accurate to the paisa.
 
 </td>
 </tr>
+<tr>
+<td width="50%" valign="top">
+
+#### finance-kit &nbsp;`coming soon`
+The lab's money, end to end: double-entry books, GST, receivables and payouts, built on the same
+exact-to-the-paisa, ACID foundations.
+
+</td>
+<td width="50%" valign="top">
+
+#### …and many more &nbsp;`on the way`
+Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation for what
+ships next.
+
+</td>
+</tr>
 </table>
 
 ### 🖥️ Apps and clients
@@ -82,6 +98,8 @@ flowchart LR
   API --> DB[db-kit]
   API --> CAT[catalog-kit]
   API --> RND["report-kit · invoice-kit"]
+  API -.-> FIN["finance-kit<br/>(coming soon)"]
+  FIN -.-> DB
   DB --> M[(MongoDB)]
   DB --> PG[(PostgreSQL)]
   DB --> R[(Redis)]

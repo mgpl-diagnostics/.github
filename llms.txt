@@ -17,6 +17,7 @@ Key facts for agents:
 - [client](https://github.com/mgpl-diagnostics/client): headless frontend SDK
 - [report-studio](https://github.com/mgpl-diagnostics/report-studio): reference Next.js app
 - [website](https://github.com/mgpl-diagnostics/website): the lab's public website
+- Coming soon: finance-kit (books, GST, receivables, payouts), api (the GraphQL backend), lab-panel, auth client, and more kits
 
 ## Files
 
