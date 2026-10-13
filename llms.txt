@@ -1,0 +1,27 @@
+# mgpl-diagnostics/.github
+
+> Organisation-wide files for MGPL Diagnostics (Maa Gayatri Path Lab, Arang, Raipur): the GitHub profile page and banner, the community files every repo inherits (issue forms, PR template, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, SUPPORT), and scripts that generate the banner and avatar and apply the repository rules.
+
+Key facts for agents:
+- Every repo is public; `main` takes pull requests only (from forks for outside contributors), with green `ci` and a code-owner review. Rules are applied by `node scripts/protect-repos.mjs`.
+- GraphQL first across the org; REST only for binary downloads, assets, health checks and webhooks.
+- Never commit patient data, real signatures, secrets or `.env` files.
+
+## Repos
+
+- [db-kit](https://github.com/mgpl-diagnostics/db-kit): data layer (MongoDB/PostgreSQL, ACID, Tally books, Redis cache)
+- [auth-kit](https://github.com/mgpl-diagnostics/auth-kit): passwords, sessions, roles (internal API)
+- [catalog-kit](https://github.com/mgpl-diagnostics/catalog-kit): tests, ranges, prices, search
+- [report-kit](https://github.com/mgpl-diagnostics/report-kit): A4 lab reports (PDF + HTML)
+- [invoice-kit](https://github.com/mgpl-diagnostics/invoice-kit): patient invoices (PDF + HTML)
+- [client](https://github.com/mgpl-diagnostics/client): headless frontend SDK
+- [report-studio](https://github.com/mgpl-diagnostics/report-studio): reference Next.js app
+- [website](https://github.com/mgpl-diagnostics/website): the lab's public website
+
+## Files
+
+- [profile/README.md](profile/README.md): the organisation profile
+- [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md): fork → branch → pull request
+- [.github/SECURITY.md](.github/SECURITY.md): private vulnerability reporting
+- [scripts/protect-repos.mjs](scripts/protect-repos.mjs): rulesets and repo settings
+- [llms-full.txt](llms-full.txt): every file in one document

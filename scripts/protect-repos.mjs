@@ -25,7 +25,10 @@ const DRY = process.argv.includes("--dry-run");
 const only = process.argv.slice(2).filter((a) => !a.startsWith("--"));
 
 // Required status checks per repo (job ids in .github/workflows/ci.yml). Repos without CI get none.
-const CHECKS = { "report-kit": ["ci"], "invoice-kit": ["ci"], client: ["ci"], "report-studio": ["ci"] };
+const CHECKS = {
+  "report-kit": ["ci"], "invoice-kit": ["ci"], client: ["ci"], "report-studio": ["ci"],
+  "catalog-kit": ["ci"], "db-kit": ["ci"], "auth-kit": ["ci"],
+};
 const GITHUB_ACTIONS_APP_ID = 15368;
 
 function gh(args, body) {
