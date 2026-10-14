@@ -89,9 +89,9 @@ ships next.
 
 | | |
 | --- | --- |
-| [**client**](https://github.com/mgpl-diagnostics/client) `frontend` | Headless, typed, zero-dependency SDK. Bring your own UI |
+| [**client**](https://github.com/mgpl-diagnostics/client) `frontend` | Headless, typed, zero-dependency SDK for the GraphQL API. Bring your own UI |
 | [**report-studio**](https://github.com/mgpl-diagnostics/report-studio) `app` | Reference Next.js app: report and invoice designer, result entry |
-| **api** `coming soon` | The backend: one GraphQL endpoint on Fastify that combines every kit |
+| [**api**](https://github.com/mgpl-diagnostics/api) `backend` | The backend: one GraphQL endpoint on Fastify that combines every kit |
 | **lab-panel** `coming soon` | Registrations, samples, results, billing and books for every branch |
 | **auth client** `coming soon` | Sign-in for frontends, with adapters for TanStack Query and others |
 
@@ -117,11 +117,11 @@ flowchart LR
   DB --> PG[(PostgreSQL)]
   DB --> R[(Redis)]
   AUTH --> R
-  RND -->|"REST, binary only"| PDF["A4 PDF"]
+  RND --> PDF["A4 PDF / HTML<br/>inside the GraphQL response"]
 ```
 
-**GraphQL first.** REST appears only where it has to: PDF downloads, assets, health checks and payment
-webhooks.
+**One endpoint.** Everything goes through `POST /graphql`, PDFs included (as base64). The only other route
+is a health check.
 
 ### ⚡ A taste
 
