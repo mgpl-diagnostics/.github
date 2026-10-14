@@ -77,9 +77,18 @@ close and CSV exports for the CA.
 <tr>
 <td colspan="2" valign="top">
 
+#### [security-kit](https://github.com/mgpl-diagnostics/security-kit) &nbsp;`security`
+One package for both sides. Frontends collect a device id, a per-tab id and a coarse fingerprint; the
+backend binds them to the session and stops a token used from another browser. Also client IP behind
+proxies, security and CORS headers, and log redaction. Zero dependencies.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+
 #### …and many more &nbsp;`on the way`
-[mail-kit](https://github.com/mgpl-diagnostics/mail-kit) and [security-kit](https://github.com/mgpl-diagnostics/security-kit)
-are next. Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation
+[mail-kit](https://github.com/mgpl-diagnostics/mail-kit) is next. Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation
 for what ships next.
 
 </td>
