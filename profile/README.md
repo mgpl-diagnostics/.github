@@ -78,8 +78,9 @@ close and CSV exports for the CA.
 <td colspan="2" valign="top">
 
 #### …and many more &nbsp;`on the way`
-Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation for what
-ships next.
+[mail-kit](https://github.com/mgpl-diagnostics/mail-kit) and [security-kit](https://github.com/mgpl-diagnostics/security-kit)
+are next. Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation
+for what ships next.
 
 </td>
 </tr>
@@ -89,9 +90,10 @@ ships next.
 
 | | |
 | --- | --- |
-| [**client**](https://github.com/mgpl-diagnostics/client) `frontend` | Headless, typed, zero-dependency SDK for the GraphQL API. Bring your own UI |
-| [**report-studio**](https://github.com/mgpl-diagnostics/report-studio) `app` | Reference Next.js app: report and invoice designer, result entry |
 | [**api**](https://github.com/mgpl-diagnostics/api) `backend` | The backend: one GraphQL endpoint on Fastify that combines every kit |
+| [**client**](https://github.com/mgpl-diagnostics/client) `frontend` | Headless, typed, zero-dependency SDK with a method for every GraphQL operation. Bring your own UI |
+| [**website**](https://github.com/mgpl-diagnostics/website) `site` | The lab's public website: a living 3D lab, the full test catalogue with prices, home collection and booking |
+| [**report-studio**](https://github.com/mgpl-diagnostics/report-studio) `app` | Reference Next.js app: report and invoice designer, result entry |
 | **lab-panel** `coming soon` | Registrations, samples, results, billing and books for every branch |
 | **auth client** `coming soon` | Sign-in for frontends, with adapters for TanStack Query and others |
 
@@ -126,17 +128,20 @@ is a health check.
 ### ⚡ A taste
 
 ```ts
-import { createDb, issueInvoice, trialBalance } from "@mgpl-diagnostics/db-kit";
-import { createAuth } from "@mgpl-diagnostics/auth-kit";
+import { createMgplGraphQLClient, documentBlob, openBlob } from "@mgpl-diagnostics/client";
 
-const db = await createDb({ backend: "pg", pg: { url: process.env.DATABASE_URL }, redis: process.env.REDIS_URL });
-const auth = createAuth({ users: db.repos.users, roles: db.repos.roles, sessions /* Redis */ });
+const mgpl = createMgplGraphQLClient({ url: "https://api.your-lab.in/graphql" });
+await mgpl.auth.login({ email: "desk@your-lab.in", password });
 
-const { viewer, can } = await auth.context(token);
-if (can("invoice:create", branchId)) {
-  const { invoice } = await issueInvoice(db.repos, { orgId: viewer!.orgId, branchId, patientId, items, payments });
-  // → numbered MGPL/RPR01/2026-27/000045, Sales + Receipt vouchers posted, books still balance
-}
+const patient = await mgpl.patients.register({ branchId, name: "Kavita Sharma", sex: "female", ageYears: 32 });
+const invoice = await mgpl.invoices.issue({
+  branchId, patientId: patient.id,
+  items: [{ code: "CBC" }],                          // name and MRP from the catalog
+  payments: [{ amountPaise: 30000, mode: "upi" }],
+});
+// → numbered per branch and financial year, Sales + Receipt vouchers posted, books still balance
+
+openBlob(documentBlob(await mgpl.documents.invoice(invoice.id)));  // the A4 PDF, as base64 over GraphQL
 ```
 
 ### ✅ How we work
