@@ -28,8 +28,8 @@
 
 #### [db-kit](https://github.com/mgpl-diagnostics/db-kit) &nbsp;`data`
 Patients, bookings, samples, reports, invoices and payments on **MongoDB or PostgreSQL**, behind one API.
-Workflows are ACID on both. Books are double-entry, Tally-style, with trial balance, P&L, balance sheet
-and GST. Includes a Redis cache toolkit.
+Workflows are ACID on both. Stores the books and the finance records, and includes a Redis cache
+toolkit.
 
 </td>
 <td width="50%" valign="top">
@@ -59,12 +59,23 @@ barcode, QR and GST bills accurate to the paisa.
 <tr>
 <td width="50%" valign="top">
 
-#### finance-kit &nbsp;`coming soon`
-The lab's money, end to end: double-entry books, GST, receivables and payouts, built on the same
-exact-to-the-paisa, ACID foundations.
+#### [tally-kit](https://github.com/mgpl-diagnostics/tally-kit) &nbsp;`books`
+Our own accounting engine: the 28 standard account groups, ledgers and vouchers, numbered per financial
+year and always balanced. Invoices and payments post themselves, and lock dates hold. Trial balance, day
+book, P&L and balance sheet, proven identical on MongoDB and PostgreSQL.
 
 </td>
 <td width="50%" valign="top">
+
+#### [finance-kit](https://github.com/mgpl-diagnostics/finance-kit) &nbsp;`money`
+GST by place of supply with GSTR-1 and GSTR-3B data, B2B receivables and credit notes, and
+collection-centre settlements with TDS. Also day-end cash, bank reconciliation, lock dates, year-end
+close and CSV exports for the CA.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
 
 #### …and many more &nbsp;`on the way`
 Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation for what
@@ -98,8 +109,10 @@ flowchart LR
   API --> DB[db-kit]
   API --> CAT[catalog-kit]
   API --> RND["report-kit · invoice-kit"]
-  API -.-> FIN["finance-kit<br/>(coming soon)"]
-  FIN -.-> DB
+  API --> FIN[finance-kit]
+  FIN --> BOOKS[tally-kit]
+  BOOKS --> DB
+  FIN --> DB
   DB --> M[(MongoDB)]
   DB --> PG[(PostgreSQL)]
   DB --> R[(Redis)]
