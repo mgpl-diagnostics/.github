@@ -17,8 +17,8 @@ Key facts for agents:
 - [client](https://github.com/mgpl-diagnostics/client): headless frontend SDK (a typed method for every GraphQL operation)
 - [report-studio](https://github.com/mgpl-diagnostics/report-studio): reference Next.js app
 - [website](https://github.com/mgpl-diagnostics/website): the lab's public website
-- [finance-kit](https://github.com/mgpl-diagnostics/finance-kit): GST and GSTR-1/3B data, receivables and credit notes, partner settlements with TDS, cash/bank, lock dates, year-end; posts through tally-kit
-- [tally-kit](https://github.com/mgpl-diagnostics/tally-kit): our own accounting engine: groups, ledgers, vouchers, automatic posting (db-kit PostingHook), books reports; no Tally import/export
+- [finance-kit](https://github.com/mgpl-diagnostics/finance-kit): GST and GSTR-1/3B data, receivables and credit notes, partner settlements with TDS, cash/bank, lock dates, year-end; posts through ledger-kit
+- [ledger-kit](https://github.com/mgpl-diagnostics/ledger-kit): our own accounting engine: groups, ledgers, vouchers, automatic posting (db-kit PostingHook), books reports; no Tally import/export
 - [api](https://github.com/mgpl-diagnostics/api): the backend, one GraphQL endpoint (`POST /graphql`, Yoga on Fastify) over every kit
 - Coming soon: mail-kit, security-kit, lab-panel, auth client, and more kits
 
