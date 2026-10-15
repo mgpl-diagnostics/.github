@@ -87,8 +87,18 @@ proxies, security and CORS headers, and log redaction. Zero dependencies.
 <tr>
 <td colspan="2" valign="top">
 
+#### [mail-kit](https://github.com/mgpl-diagnostics/mail-kit) &nbsp;`mail`
+Mails written in our own mail design language instead of HTML, compiled to email-safe HTML and plain
+text in one design. Sent through the worker's queue when it is running, or straight over SMTP when it
+is not. Zero dependencies.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+
 #### …and many more &nbsp;`on the way`
-[mail-kit](https://github.com/mgpl-diagnostics/mail-kit) is next. Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation
+Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation
 for what ships next.
 
 </td>
