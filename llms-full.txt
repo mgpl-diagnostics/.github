@@ -505,8 +505,8 @@ Key facts for agents:
 - [client](https://github.com/mgpl-diagnostics/client): headless frontend SDK (a typed method for every GraphQL operation)
 - [report-studio](https://github.com/mgpl-diagnostics/report-studio): reference Next.js app
 - [website](https://github.com/mgpl-diagnostics/website): the lab's public website
-- [finance-kit](https://github.com/mgpl-diagnostics/finance-kit): GST and GSTR-1/3B data, receivables and credit notes, partner settlements with TDS, cash/bank, lock dates, year-end; posts through tally-kit
-- [tally-kit](https://github.com/mgpl-diagnostics/tally-kit): our own accounting engine: groups, ledgers, vouchers, automatic posting (db-kit PostingHook), books reports; no Tally import/export
+- [finance-kit](https://github.com/mgpl-diagnostics/finance-kit): GST and GSTR-1/3B data, receivables and credit notes, partner settlements with TDS, cash/bank, lock dates, year-end; posts through ledger-kit
+- [ledger-kit](https://github.com/mgpl-diagnostics/ledger-kit): our own accounting engine: groups, ledgers, vouchers, automatic posting (db-kit PostingHook), books reports; no Tally import/export
 - [api](https://github.com/mgpl-diagnostics/api): the backend, one GraphQL endpoint (`POST /graphql`, Yoga on Fastify) over every kit
 - Coming soon: mail-kit, security-kit, lab-panel, auth client, and more kits
 
@@ -584,7 +584,7 @@ barcode, QR and GST bills accurate to the paisa.
 <tr>
 <td width="50%" valign="top">
 
-#### [tally-kit](https://github.com/mgpl-diagnostics/tally-kit) &nbsp;`books`
+#### [ledger-kit](https://github.com/mgpl-diagnostics/ledger-kit) &nbsp;`books`
 Our own accounting engine: the 28 standard account groups, ledgers and vouchers, numbered per financial
 year and always balanced. Invoices and payments post themselves, and lock dates hold. Trial balance, day
 book, P&L and balance sheet, proven identical on MongoDB and PostgreSQL.
@@ -602,9 +602,38 @@ close and CSV exports for the CA.
 <tr>
 <td colspan="2" valign="top">
 
+#### [security-kit](https://github.com/mgpl-diagnostics/security-kit) &nbsp;`security`
+One package for both sides. Frontends collect a device id, a per-tab id and a coarse fingerprint; the
+backend binds them to the session and stops a token used from another browser. Also client IP behind
+proxies, security and CORS headers, and log redaction. Zero dependencies.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+
+#### [mail-kit](https://github.com/mgpl-diagnostics/mail-kit) &nbsp;`mail`
+Mails written in our own mail design language instead of HTML, compiled to email-safe HTML and plain
+text in one design. Sent through the worker's queue when it is running, or straight over SMTP when it
+is not. Zero dependencies.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+
+#### [worker-kit](https://github.com/mgpl-diagnostics/worker-kit) &nbsp;`jobs`
+Background jobs defined once and run on BullMQ over Redis by a separate worker, in-process when there
+is no Redis, or on the worker when it is up and standalone when it is not. Same retries, results and
+error messages everywhere.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+
 #### …and many more &nbsp;`on the way`
-[mail-kit](https://github.com/mgpl-diagnostics/mail-kit) and [security-kit](https://github.com/mgpl-diagnostics/security-kit)
-are next. Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation
+Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation
 for what ships next.
 
 </td>
@@ -637,7 +666,7 @@ flowchart LR
   API --> CAT[catalog-kit]
   API --> RND["report-kit · invoice-kit"]
   API --> FIN[finance-kit]
-  FIN --> BOOKS[tally-kit]
+  FIN --> BOOKS[ledger-kit]
   BOOKS --> DB
   FIN --> DB
   DB --> M[(MongoDB)]
@@ -962,7 +991,7 @@ const only = process.argv.slice(2).filter((a) => !a.startsWith("--"));
 // Required status checks per repo (job ids in .github/workflows/ci.yml). Repos without CI get none.
 const CHECKS = {
   "report-kit": ["ci"], "invoice-kit": ["ci"], client: ["ci"], "report-studio": ["ci"],
-  "catalog-kit": ["ci"], "db-kit": ["ci"], "auth-kit": ["ci"], "finance-kit": ["ci"], "tally-kit": ["ci"], api: ["ci"],
+  "catalog-kit": ["ci"], "db-kit": ["ci"], "auth-kit": ["ci"], "finance-kit": ["ci"], "ledger-kit": ["ci"], api: ["ci"], "security-kit": ["ci"], "mail-kit": ["ci"], "worker-kit": ["ci"],
 };
 const GITHUB_ACTIONS_APP_ID = 15368;
 

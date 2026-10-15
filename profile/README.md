@@ -59,7 +59,7 @@ barcode, QR and GST bills accurate to the paisa.
 <tr>
 <td width="50%" valign="top">
 
-#### [tally-kit](https://github.com/mgpl-diagnostics/tally-kit) &nbsp;`books`
+#### [ledger-kit](https://github.com/mgpl-diagnostics/ledger-kit) &nbsp;`books`
 Our own accounting engine: the 28 standard account groups, ledgers and vouchers, numbered per financial
 year and always balanced. Invoices and payments post themselves, and lock dates hold. Trial balance, day
 book, P&L and balance sheet, proven identical on MongoDB and PostgreSQL.
@@ -141,7 +141,7 @@ flowchart LR
   API --> CAT[catalog-kit]
   API --> RND["report-kit · invoice-kit"]
   API --> FIN[finance-kit]
-  FIN --> BOOKS[tally-kit]
+  FIN --> BOOKS[ledger-kit]
   BOOKS --> DB
   FIN --> DB
   DB --> M[(MongoDB)]
