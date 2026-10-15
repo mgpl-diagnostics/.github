@@ -97,6 +97,16 @@ is not. Zero dependencies.
 <tr>
 <td colspan="2" valign="top">
 
+#### [worker-kit](https://github.com/mgpl-diagnostics/worker-kit) &nbsp;`jobs`
+Background jobs defined once and run on BullMQ over Redis by a separate worker, in-process when there
+is no Redis, or on the worker when it is up and standalone when it is not. Same retries, results and
+error messages everywhere.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+
 #### …and many more &nbsp;`on the way`
 Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation
 for what ships next.
