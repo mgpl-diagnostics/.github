@@ -542,6 +542,7 @@ Key facts for agents:
   <img src="https://img.shields.io/badge/Fastify-14264A?logo=fastify&logoColor=white" alt="Fastify" />
   <img src="https://img.shields.io/badge/MongoDB-14264A?logo=mongodb&logoColor=white" alt="MongoDB" />
   <img src="https://img.shields.io/badge/PostgreSQL-14264A?logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/PgBouncer-14264A?logo=postgresql&logoColor=white" alt="PgBouncer" />
   <img src="https://img.shields.io/badge/Redis-14264A?logo=redis&logoColor=white" alt="Redis" />
   <img src="https://img.shields.io/badge/Next.js-14264A?logo=next.js&logoColor=white" alt="Next.js" />
   <img src="https://img.shields.io/badge/react--pdf-C2410C" alt="react-pdf" />
@@ -675,7 +676,8 @@ flowchart LR
     S[report-studio]
     W[website]
   end
-  Apps -->|"GraphQL"| API["api<br/>Fastify · GraphQL Yoga"]
+  Apps -->|"GraphQL"| LB["load balancer"]
+  LB --> API["api × N replicas<br/>Fastify · GraphQL Yoga"]
   API --> AUTH[auth-kit]
   API --> DB[db-kit]
   API --> CAT[catalog-kit]
