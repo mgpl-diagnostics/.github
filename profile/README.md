@@ -13,6 +13,7 @@
   <img src="https://img.shields.io/badge/Fastify-14264A?logo=fastify&logoColor=white" alt="Fastify" />
   <img src="https://img.shields.io/badge/MongoDB-14264A?logo=mongodb&logoColor=white" alt="MongoDB" />
   <img src="https://img.shields.io/badge/PostgreSQL-14264A?logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/PgBouncer-14264A?logo=postgresql&logoColor=white" alt="PgBouncer" />
   <img src="https://img.shields.io/badge/Redis-14264A?logo=redis&logoColor=white" alt="Redis" />
   <img src="https://img.shields.io/badge/Next.js-14264A?logo=next.js&logoColor=white" alt="Next.js" />
   <img src="https://img.shields.io/badge/react--pdf-C2410C" alt="react-pdf" />
@@ -107,6 +108,17 @@ error messages everywhere.
 <tr>
 <td colspan="2" valign="top">
 
+#### [pgbouncer-kit](https://github.com/mgpl-diagnostics/pgbouncer-kit) &nbsp;`scaling`
+PgBouncer in front of PostgreSQL, so every api replica and the worker share one small pool of server
+connections. Writes `pgbouncer.ini` and a SCRAM user list from typed config or env, plus a compose
+service with a health check, TLS on both sides, a readiness probe that needs no credentials, and a CLI
+for container entrypoints. Zero dependencies.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+
 #### …and many more &nbsp;`on the way`
 Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation
 for what ships next.
@@ -119,7 +131,7 @@ for what ships next.
 
 | | |
 | --- | --- |
-| [**api**](https://github.com/mgpl-diagnostics/api) `backend` | The backend: one GraphQL endpoint on Fastify that combines every kit |
+| [**api**](https://github.com/mgpl-diagnostics/api) `backend` | The backend: one GraphQL endpoint on Fastify that combines every kit, run as replicas behind PgBouncer |
 | [**client**](https://github.com/mgpl-diagnostics/client) `frontend` | Headless, typed, zero-dependency SDK with a method for every GraphQL operation. Bring your own UI |
 | [**website**](https://github.com/mgpl-diagnostics/website) `site` | The lab's public website: a living 3D lab, the full test catalogue with prices, home collection and booking |
 | [**report-studio**](https://github.com/mgpl-diagnostics/report-studio) `app` | Reference Next.js app: report and invoice designer, result entry |
@@ -135,19 +147,25 @@ flowchart LR
     S[report-studio]
     W[website]
   end
-  Apps -->|"GraphQL"| API["api<br/>Fastify · GraphQL Yoga"]
+  Apps -->|"GraphQL"| LB["load balancer"]
+  LB --> API["api × N replicas<br/>Fastify · GraphQL Yoga"]
   API --> AUTH[auth-kit]
   API --> DB[db-kit]
   API --> CAT[catalog-kit]
   API --> RND["report-kit · invoice-kit"]
   API --> FIN[finance-kit]
+  API --> SEC[security-kit]
+  API --> MAIL[mail-kit]
+  MAIL --> JOBS[worker-kit]
   FIN --> BOOKS[ledger-kit]
   BOOKS --> DB
   FIN --> DB
   DB --> M[(MongoDB)]
-  DB --> PG[(PostgreSQL)]
+  DB --> PGB["PgBouncer<br/>pgbouncer-kit"]
+  PGB --> PG[(PostgreSQL)]
   DB --> R[(Redis)]
   AUTH --> R
+  JOBS --> R
   RND --> PDF["A4 PDF / HTML<br/>inside the GraphQL response"]
 ```
 
@@ -178,6 +196,8 @@ openBlob(documentBlob(await mgpl.documents.invoice(invoice.id)));  // the A4 PDF
 - **Money is exact.** Integer paise, double-entry vouchers that must balance, and ACID transactions on
   MongoDB and PostgreSQL. Tests show two concurrent overpayments can't both succeed.
 - **Both databases, one contract.** The same test suite runs on real MongoDB and real PostgreSQL.
+- **Scales out.** The api runs as several replicas behind a load balancer. PostgreSQL connections go
+  through PgBouncer in transaction mode, and sessions, limits and jobs live in Redis, not in a process.
 - **Secure by default.** Tokens are stored only as hashes. Data is isolated per organisation, and
   permissions are checked per branch.
 - **HTML and PDF match.** One geometry, one row model, the same page breaks; every value is checked inside the PDF.
