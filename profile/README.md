@@ -107,10 +107,11 @@ error messages everywhere.
 <tr>
 <td colspan="2" valign="top">
 
-#### [pgbouncer-kit](https://github.com/mgpl-diagnostics/pgbouncer-kit) &nbsp;`scaling` &nbsp;*in progress*
-PgBouncer in front of PostgreSQL, so every api replica shares one small pool of database connections.
-It will generate the PgBouncer config and user list, a compose service, health checks and TLS settings
-for transaction pooling, tested against real PostgreSQL and PgBouncer.
+#### [pgbouncer-kit](https://github.com/mgpl-diagnostics/pgbouncer-kit) &nbsp;`scaling`
+PgBouncer in front of PostgreSQL, so every api replica and the worker share one small pool of server
+connections. Writes `pgbouncer.ini` and a SCRAM user list from typed config or env, plus a compose
+service with a health check, TLS on both sides, a readiness probe that needs no credentials, and a CLI
+for container entrypoints. Zero dependencies.
 
 </td>
 </tr>
@@ -129,7 +130,7 @@ for what ships next.
 
 | | |
 | --- | --- |
-| [**api**](https://github.com/mgpl-diagnostics/api) `backend` | The backend: one GraphQL endpoint on Fastify that combines every kit |
+| [**api**](https://github.com/mgpl-diagnostics/api) `backend` | The backend: one GraphQL endpoint on Fastify that combines every kit, run as replicas behind PgBouncer |
 | [**client**](https://github.com/mgpl-diagnostics/client) `frontend` | Headless, typed, zero-dependency SDK with a method for every GraphQL operation. Bring your own UI |
 | [**website**](https://github.com/mgpl-diagnostics/website) `site` | The lab's public website: a living 3D lab, the full test catalogue with prices, home collection and booking |
 | [**report-studio**](https://github.com/mgpl-diagnostics/report-studio) `app` | Reference Next.js app: report and invoice designer, result entry |
@@ -193,6 +194,8 @@ openBlob(documentBlob(await mgpl.documents.invoice(invoice.id)));  // the A4 PDF
 - **Money is exact.** Integer paise, double-entry vouchers that must balance, and ACID transactions on
   MongoDB and PostgreSQL. Tests show two concurrent overpayments can't both succeed.
 - **Both databases, one contract.** The same test suite runs on real MongoDB and real PostgreSQL.
+- **Scales out.** The api runs as several replicas behind a load balancer. PostgreSQL connections go
+  through PgBouncer in transaction mode, and sessions, limits and jobs live in Redis, not in a process.
 - **Secure by default.** Tokens are stored only as hashes. Data is isolated per organisation, and
   permissions are checked per branch.
 - **HTML and PDF match.** One geometry, one row model, the same page breaks; every value is checked inside the PDF.
