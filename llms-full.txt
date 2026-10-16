@@ -538,6 +538,7 @@ Key facts for agents:
   <img src="https://img.shields.io/badge/Fastify-14264A?logo=fastify&logoColor=white" alt="Fastify" />
   <img src="https://img.shields.io/badge/MongoDB-14264A?logo=mongodb&logoColor=white" alt="MongoDB" />
   <img src="https://img.shields.io/badge/PostgreSQL-14264A?logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/PgBouncer-14264A?logo=postgresql&logoColor=white" alt="PgBouncer" />
   <img src="https://img.shields.io/badge/Redis-14264A?logo=redis&logoColor=white" alt="Redis" />
   <img src="https://img.shields.io/badge/Next.js-14264A?logo=next.js&logoColor=white" alt="Next.js" />
   <img src="https://img.shields.io/badge/react--pdf-C2410C" alt="react-pdf" />
@@ -660,7 +661,8 @@ flowchart LR
     S[report-studio]
     W[website]
   end
-  Apps -->|"GraphQL"| API["api<br/>Fastify · GraphQL Yoga"]
+  Apps -->|"GraphQL"| LB["load balancer"]
+  LB --> API["api × N replicas<br/>Fastify · GraphQL Yoga"]
   API --> AUTH[auth-kit]
   API --> DB[db-kit]
   API --> CAT[catalog-kit]
@@ -670,7 +672,8 @@ flowchart LR
   BOOKS --> DB
   FIN --> DB
   DB --> M[(MongoDB)]
-  DB --> PG[(PostgreSQL)]
+  DB --> PGB["PgBouncer<br/>transaction pooling"]
+  PGB --> PG[(PostgreSQL)]
   DB --> R[(Redis)]
   AUTH --> R
   RND --> PDF["A4 PDF / HTML<br/>inside the GraphQL response"]
@@ -678,6 +681,10 @@ flowchart LR
 
 **One endpoint.** Everything goes through `POST /graphql`, PDFs included (as base64). The only other route
 is a health check.
+
+**Scales out.** The api runs as any number of identical replicas behind a load balancer. Sessions, login
+limits and jobs live in Redis, and PostgreSQL is reached through PgBouncer in transaction mode, so a few
+database connections serve every replica. The whole test suite runs through PgBouncer too.
 
 ### ⚡ A taste
 
