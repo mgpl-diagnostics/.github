@@ -508,7 +508,11 @@ Key facts for agents:
 - [finance-kit](https://github.com/mgpl-diagnostics/finance-kit): GST and GSTR-1/3B data, receivables and credit notes, partner settlements with TDS, cash/bank, lock dates, year-end; posts through ledger-kit
 - [ledger-kit](https://github.com/mgpl-diagnostics/ledger-kit): our own accounting engine: groups, ledgers, vouchers, automatic posting (db-kit PostingHook), books reports; no Tally import/export
 - [api](https://github.com/mgpl-diagnostics/api): the backend, one GraphQL endpoint (`POST /graphql`, Yoga on Fastify) over every kit
-- Coming soon: mail-kit, security-kit, lab-panel, auth client, and more kits
+- [security-kit](https://github.com/mgpl-diagnostics/security-kit): device signals bound to sessions, client IP behind proxies, TLS fingerprint, security/CORS headers, log redaction (browser + server, zero dependencies)
+- [mail-kit](https://github.com/mgpl-diagnostics/mail-kit): mails in our own mail design language, compiled to email-safe HTML + text; SMTP, sent through the worker queue when available
+- [worker-kit](https://github.com/mgpl-diagnostics/worker-kit): background jobs on BullMQ (Redis), in-process, or worker-with-fallback; same retries and results everywhere
+- [pgbouncer-kit](https://github.com/mgpl-diagnostics/pgbouncer-kit) (in progress): PgBouncer in front of PostgreSQL for api replicas: config, user list, compose service, health checks, TLS (transaction pooling)
+- Coming soon: lab-panel, auth client, and more kits
 
 ## Files
 
@@ -632,6 +636,16 @@ error messages everywhere.
 <tr>
 <td colspan="2" valign="top">
 
+#### [pgbouncer-kit](https://github.com/mgpl-diagnostics/pgbouncer-kit) &nbsp;`scaling` &nbsp;*in progress*
+PgBouncer in front of PostgreSQL, so every api replica shares one small pool of database connections.
+It will generate the PgBouncer config and user list, a compose service, health checks and TLS settings
+for transaction pooling, tested against real PostgreSQL and PgBouncer.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+
 #### …and many more &nbsp;`on the way`
 Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation
 for what ships next.
@@ -666,13 +680,18 @@ flowchart LR
   API --> CAT[catalog-kit]
   API --> RND["report-kit · invoice-kit"]
   API --> FIN[finance-kit]
+  API --> SEC[security-kit]
+  API --> MAIL[mail-kit]
+  MAIL --> JOBS[worker-kit]
   FIN --> BOOKS[ledger-kit]
   BOOKS --> DB
   FIN --> DB
   DB --> M[(MongoDB)]
-  DB --> PG[(PostgreSQL)]
+  DB --> PGB["PgBouncer<br/>pgbouncer-kit"]
+  PGB --> PG[(PostgreSQL)]
   DB --> R[(Redis)]
   AUTH --> R
+  JOBS --> R
   RND --> PDF["A4 PDF / HTML<br/>inside the GraphQL response"]
 ```
 

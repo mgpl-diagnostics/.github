@@ -107,6 +107,16 @@ error messages everywhere.
 <tr>
 <td colspan="2" valign="top">
 
+#### [pgbouncer-kit](https://github.com/mgpl-diagnostics/pgbouncer-kit) &nbsp;`scaling` &nbsp;*in progress*
+PgBouncer in front of PostgreSQL, so every api replica shares one small pool of database connections.
+It will generate the PgBouncer config and user list, a compose service, health checks and TLS settings
+for transaction pooling, tested against real PostgreSQL and PgBouncer.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+
 #### …and many more &nbsp;`on the way`
 Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation
 for what ships next.
@@ -141,13 +151,18 @@ flowchart LR
   API --> CAT[catalog-kit]
   API --> RND["report-kit · invoice-kit"]
   API --> FIN[finance-kit]
+  API --> SEC[security-kit]
+  API --> MAIL[mail-kit]
+  MAIL --> JOBS[worker-kit]
   FIN --> BOOKS[ledger-kit]
   BOOKS --> DB
   FIN --> DB
   DB --> M[(MongoDB)]
-  DB --> PG[(PostgreSQL)]
+  DB --> PGB["PgBouncer<br/>pgbouncer-kit"]
+  PGB --> PG[(PostgreSQL)]
   DB --> R[(Redis)]
   AUTH --> R
+  JOBS --> R
   RND --> PDF["A4 PDF / HTML<br/>inside the GraphQL response"]
 ```
 
