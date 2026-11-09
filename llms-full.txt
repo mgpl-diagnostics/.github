@@ -512,6 +512,7 @@ Key facts for agents:
 - [mail-kit](https://github.com/mgpl-diagnostics/mail-kit): mails in our own mail design language, compiled to email-safe HTML + text; SMTP, sent through the worker queue when available
 - [worker-kit](https://github.com/mgpl-diagnostics/worker-kit): background jobs on BullMQ (Redis), in-process, or worker-with-fallback; same retries and results everywhere
 - [pgbouncer-kit](https://github.com/mgpl-diagnostics/pgbouncer-kit): PgBouncer in front of PostgreSQL for the api replicas and worker (transaction pooling): pgbouncer.ini and SCRAM user list, compose service, readiness probe, TLS, CLI; zero dependencies
+- [report-reader](https://github.com/mgpl-diagnostics/report-reader): reads Hy Patho Lab and Clinova report PDFs into typed results (exact text layer, no OCR), with performed-by, reported-by (signature from the same PDF) and per-test NABL evidence
 - Coming soon: lab-panel, auth client, and more kits
 
 ## Files
@@ -648,6 +649,17 @@ for container entrypoints. Zero dependencies.
 <tr>
 <td colspan="2" valign="top">
 
+#### [report-reader](https://github.com/mgpl-diagnostics/report-reader) &nbsp;`import`
+Reads partner-lab report PDFs (Hy Patho Lab, Clinova Pathlabs) into typed results, with no retyping. It
+takes values from the PDF's own text layer, so they are exact, with no OCR guesswork. For each test it
+records who performed it, which doctor reported it (with the signature from that same PDF), and whether
+the performing lab marked it NABL-accredited.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+
 #### …and many more &nbsp;`on the way`
 Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation
 for what ships next.
@@ -685,6 +697,7 @@ flowchart LR
   API --> FIN[finance-kit]
   API --> SEC[security-kit]
   API --> MAIL[mail-kit]
+  API --> READ[report-reader]
   MAIL --> JOBS[worker-kit]
   FIN --> BOOKS[ledger-kit]
   BOOKS --> DB
@@ -1015,7 +1028,7 @@ const only = process.argv.slice(2).filter((a) => !a.startsWith("--"));
 // Required status checks per repo (job ids in .github/workflows/ci.yml). Repos without CI get none.
 const CHECKS = {
   "report-kit": ["ci"], "invoice-kit": ["ci"], client: ["ci"], "report-studio": ["ci"],
-  "catalog-kit": ["ci"], "db-kit": ["ci"], "auth-kit": ["ci"], "finance-kit": ["ci"], "ledger-kit": ["ci"], api: ["ci"], "security-kit": ["ci"], "mail-kit": ["ci"], "worker-kit": ["ci"],
+  "catalog-kit": ["ci"], "db-kit": ["ci"], "auth-kit": ["ci"], "finance-kit": ["ci"], "ledger-kit": ["ci"], api: ["ci"], "security-kit": ["ci"], "mail-kit": ["ci"], "worker-kit": ["ci"], "report-reader": ["ci"],
 };
 const GITHUB_ACTIONS_APP_ID = 15368;
 
