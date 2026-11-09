@@ -119,6 +119,17 @@ for container entrypoints. Zero dependencies.
 <tr>
 <td colspan="2" valign="top">
 
+#### [report-reader](https://github.com/mgpl-diagnostics/report-reader) &nbsp;`import`
+Reads partner-lab report PDFs (Hy Patho Lab, Clinova Pathlabs) into typed results, with no retyping. It
+takes values from the PDF's own text layer, so they are exact, with no OCR guesswork. For each test it
+records who performed it, which doctor reported it (with the signature from that same PDF), and whether
+the performing lab marked it NABL-accredited.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+
 #### …and many more &nbsp;`on the way`
 Each new kit does one job well and plugs into the same GraphQL API. Watch this organisation
 for what ships next.
@@ -156,6 +167,7 @@ flowchart LR
   API --> FIN[finance-kit]
   API --> SEC[security-kit]
   API --> MAIL[mail-kit]
+  API --> READ[report-reader]
   MAIL --> JOBS[worker-kit]
   FIN --> BOOKS[ledger-kit]
   BOOKS --> DB
