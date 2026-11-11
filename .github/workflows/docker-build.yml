@@ -1,0 +1,55 @@
+name: Docker build (no push)
+
+# Reusable: builds a repo's Dockerfile on every PR and on main, without pushing, so a broken Dockerfile,
+# a missing COPY or a dependency lost by `npm prune` shows up before a release tag does.
+#   jobs:
+#     docker:
+#       uses: mgpl-diagnostics/.github/.github/workflows/docker-build.yml@main
+#       with:
+#         smoke: docker run --rm "$IMAGE" node -e "…"
+# Layers are cached in the GitHub Actions cache under their own scope (release.yml's cache is not touched).
+# Pushing stays in each repo's release.yml (v* tag or manual run on main).
+
+on:
+  workflow_call:
+    inputs:
+      platform:
+        description: One platform to build (the release builds amd64 and arm64; CI checks one).
+        type: string
+        default: linux/amd64
+      smoke:
+        description: Shell command run after the build; $IMAGE is the built image. Empty to skip.
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      IMAGE: ci/${{ github.event.repository.name }}:${{ github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      # @mgpl-diagnostics/* packages come from GitHub Packages: the workflow token reads them (build secret, never a build arg)
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          platforms: ${{ inputs.platform }}
+          push: false
+          load: true
+          tags: ${{ env.IMAGE }}
+          secrets: npm_token=${{ secrets.GITHUB_TOKEN }}
+          cache-from: |
+            type=gha,scope=ci-docker
+            type=gha
+          cache-to: type=gha,scope=ci-docker,mode=max
+      - name: Image size
+        run: docker image ls "$IMAGE" --format '{{.Repository}}:{{.Tag}} {{.Size}}' | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Smoke test the image
+        if: inputs.smoke != ''
+        run: ${{ inputs.smoke }}

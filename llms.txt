@@ -33,4 +33,6 @@ Key facts for agents:
 - [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md): fork → branch → pull request
 - [.github/SECURITY.md](.github/SECURITY.md): private vulnerability reporting
 - [scripts/protect-repos.mjs](scripts/protect-repos.mjs): rulesets and repo settings
+- [actions/node](actions/node/action.yml), [actions/apt](actions/apt/action.yml): shared CI setup (npm, MongoDB and apt caches)
+- [.github/workflows/docker-build.yml](.github/workflows/docker-build.yml): reusable Docker build check (no push)
 - [llms-full.txt](llms-full.txt): every file in one document

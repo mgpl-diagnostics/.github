@@ -1,0 +1,48 @@
+name: MGPL apt install (cached)
+description: >-
+  Installs Ubuntu packages from a cache of their .deb files, keyed on the runner image, so most runs never
+  reach the Ubuntu mirrors. On a cache miss it installs from apt with retries and a time limit (a mirror DNS
+  outage once held the api's CI for five minutes and failed it).
+  `uses: mgpl-diagnostics/.github/actions/apt@main` with `packages: pgbouncer`.
+
+inputs:
+  packages:
+    description: Space-separated package names.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - id: key
+      shell: bash
+      env:
+        PACKAGES: ${{ inputs.packages }}
+      # ImageOS / ImageVersion change with every runner image, so the cached .debs always match the image.
+      run: echo "key=apt-v1-${ImageOS:-unknown}-${ImageVersion:-unknown}-${RUNNER_ARCH}-$(echo "$PACKAGES" | tr -s ' ' '-')" >> "$GITHUB_OUTPUT"
+
+    - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.cache/apt-debs
+        key: ${{ steps.key.outputs.key }}
+
+    - shell: bash
+      env:
+        PACKAGES: ${{ inputs.packages }}
+      run: |
+        set -uo pipefail
+        dir="$HOME/.cache/apt-debs"
+        if dpkg -s $PACKAGES > /dev/null 2>&1; then echo "$PACKAGES already installed"; exit 0; fi
+        if compgen -G "$dir/*.deb" > /dev/null && sudo DEBIAN_FRONTEND=noninteractive dpkg -i "$dir"/*.deb; then
+          echo "installed $PACKAGES from the cache"; exit 0
+        fi
+        rm -rf "$dir"; mkdir -p "$dir/partial"
+        apt_opts=(-q -o Acquire::Retries=3 -o Acquire::http::Timeout=20 -o Dir::Cache::archives="$dir")
+        for attempt in 1 2 3; do
+          if sudo timeout 120 apt-get update "${apt_opts[@]}" \
+            && sudo DEBIAN_FRONTEND=noninteractive timeout 300 apt-get install -y --no-install-recommends "${apt_opts[@]}" $PACKAGES; then
+            sudo rm -rf "$dir/partial" "$dir/lock"; sudo chown -R "$(id -u):$(id -g)" "$dir"
+            exit 0
+          fi
+          echo "::warning::apt install failed (attempt $attempt of 3)"; sleep $((attempt * 15))
+        done
+        echo "::error::could not install $PACKAGES"; exit 1

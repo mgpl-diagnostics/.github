@@ -1,0 +1,54 @@
+name: MGPL Node.js setup
+description: >-
+  Node.js, the npm download cache, optional GitHub Packages auth and optional MongoDB binary cache,
+  then the repo's install command. Used by the `ci` job of every MGPL repo
+  (`uses: mgpl-diagnostics/.github/actions/node@main`).
+
+inputs:
+  node-version:
+    description: Node.js version.
+    default: "22"
+  github-packages:
+    description: '"true" to read @mgpl-diagnostics/* from GitHub Packages (needs `token` and `packages: read`).'
+    default: "false"
+  token:
+    description: Token for GitHub Packages (pass secrets.GITHUB_TOKEN). Only exposed to the install step.
+    default: ""
+  install:
+    description: Install command. Repos without a lockfile keep `--no-package-lock`.
+    default: npm install --no-package-lock --no-audit --no-fund
+  mongodb:
+    description: '"true" to cache the binaries mongodb-memory-server downloads (repos whose tests start MongoDB).'
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version: ${{ inputs.node-version }}
+        registry-url: ${{ inputs.github-packages == 'true' && 'https://npm.pkg.github.com' || '' }}
+        scope: ${{ inputs.github-packages == 'true' && '@mgpl-diagnostics' || '' }}
+
+    # ~/.npm holds downloaded tarballs only. npm still asks the registry for the newest matching
+    # versions on every install (no --prefer-offline), so a freshly published kit is picked up.
+    - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.npm
+        key: npm-${{ runner.os }}-${{ runner.arch }}-node${{ inputs.node-version }}-${{ hashFiles('package.json', 'package-lock.json') }}
+        restore-keys: npm-${{ runner.os }}-${{ runner.arch }}-node${{ inputs.node-version }}-
+
+    - if: inputs.mongodb == 'true'
+      shell: bash
+      run: echo "MONGOMS_DOWNLOAD_DIR=$HOME/.cache/mongodb-binaries" >> "$GITHUB_ENV"
+    - if: inputs.mongodb == 'true'
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.cache/mongodb-binaries
+        key: mongodb-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package.json', 'package-lock.json') }}
+        restore-keys: mongodb-${{ runner.os }}-${{ runner.arch }}-
+
+    - shell: bash
+      run: ${{ inputs.install }}
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.token }}

@@ -12,3 +12,15 @@ Organisation-wide files for [github.com/mgpl-diagnostics](https://github.com/mgp
   or publishing a repo: `node scripts/protect-repos.mjs` (add `--dry-run` to preview).
 - `.github/` holds the default community files every repo inherits: issue forms, PR template, CONTRIBUTING,
   SECURITY, CODE_OF_CONDUCT and SUPPORT.
+- `actions/` holds the CI building blocks every repo's `ci` job uses (composite actions, so the required check keeps
+  its name `ci`):
+  - `actions/node`: Node.js 22, the npm download cache, GitHub Packages auth (`github-packages: "true"`), the
+    MongoDB binary cache (`mongodb: "true"`), then the install command;
+  - `actions/apt`: Ubuntu packages from cached `.deb` files keyed on the runner image, with retries and a time limit
+    on a cache miss.
+- `.github/workflows/docker-build.yml` is a reusable workflow: it builds a repo's Dockerfile without pushing, with
+  layer caching and an optional smoke test (the api and the dashboard call it on every PR). Releases still push
+  from each repo's `release.yml`.
+- Changing anything in `actions/` or `docker-build.yml` changes every repo's CI on its next run: open a PR here,
+  then re-run one kit's CI from the PR branch (`uses: …@<branch>`) before merging.
+- `llms-full.txt`: `node scripts/llms-full.mjs "mgpl-diagnostics/.github" README.md .github llms.txt profile scripts actions`.
